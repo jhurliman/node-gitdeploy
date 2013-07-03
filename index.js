@@ -17,8 +17,8 @@ function main() {
   nconf
     .argv()
     .env()
-    .file({ file: __dirname + '/config.local.json' })
-    .file({ file: __dirname + '/config.json' });
+    .file('user', __dirname + '/config.local.json')
+    .file('base', __dirname + '/config.json');
 
   // Setup console logging
   log.loggers.options.transports = [];
