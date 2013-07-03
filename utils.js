@@ -113,3 +113,5 @@ function requestErrorLogger(options) {
     next(err);
   };
 }
+
+function noOp() { }
