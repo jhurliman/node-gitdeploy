@@ -1,0 +1,15 @@
+{
+  "name": "gitdeploy",
+  "version": "1.0.0",
+  "description": "Listen for git web hooks and automatically update and deploy code",
+  "main": "index.js",
+  "keywords": [ "git", "deploy", "deployment", "github", "bitbucket", "automatic" ],
+  "author": "John Hurliman <jhurliman@jhurliman.org>",
+  "license": "BSD",
+  "dependencies": {
+    "express": "3.3.2",
+    "nconf": "0.6.7",
+    "request": "2.21.0",
+    "winston": "0.7.2"
+  }
+}

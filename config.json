@@ -1,0 +1,9 @@
+{
+  "web_port": 23200,
+  "run_as_user": "",
+  "log_path": "gitdeploy.log",
+  "log_level": "debug",
+
+  "forward_to": [],
+  "repositories": []
+}

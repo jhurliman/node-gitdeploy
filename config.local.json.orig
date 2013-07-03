@@ -1,0 +1,15 @@
+{
+  "log_level": "info",
+  "forward_to": [ "http://other.gitdeploy.server/" ],
+  "repositories": [
+    {
+      "url": "https://github.com/jhurliman/Test-Repo",
+      "path": "/home/jhurliman/projects/Test-Repo",
+      "deploy": "echo deploying"
+    },
+    {
+      "url": "https://github.com/jhurliman/Another-Repo",
+      "path": "/home/jhurliman/projects/Another-Repo"
+    }
+  ]
+}
