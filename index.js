@@ -133,21 +133,21 @@ function updateRepo(repo, callback) {
   log.info('Updating repository ' + repo.path);
   exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
     if (err || stderr)
-      return callback('git pull in ' + repo.path + ' failed: ' + (err || stderr));
+      return callback('git pull in ' + repo.path + ' failed: ' + (err || stderr.trim()));
 
-    log.debug(stdout);
+    log.debug('[git pull] ' + stdout.trim());
     log.info('Updated repository ' + repo.url + ' -> ' + repo.path);
 
     if (!repo.deploy)
       return callback();
 
-    log.info('Running deployment ' + repo.deploy);
+    log.info('Running deployment "' + repo.deploy + '"');
     exec(repo.deploy, { cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
       if (err || stderr)
-        return callback('Deploy ' + repo.deploy + ' failed: ' + (err || stderr));
+        return callback('Deploy "' + repo.deploy + '" failed: ' + (err || stderr.trim()));
 
-      log.debug(stdout);
-      log.info('Finished deployment ' + repo.deploy);
+      log.debug('[' + repo.deploy + '] ' + stdout.trim());
+      log.info('Finished deployment "' + repo.deploy + '"');
 
       callback();
     });
