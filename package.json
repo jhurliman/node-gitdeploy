@@ -6,6 +6,7 @@
   "keywords": [ "git", "deploy", "deployment", "github", "bitbucket", "automatic" ],
   "author": "John Hurliman <jhurliman@jhurliman.org>",
   "license": "BSD",
+  "bin" : { "gitdeploy" : "./bin/gitdeploy.js" },
   "dependencies": {
     "async": "0.2.9",
     "express": "3.3.2",
