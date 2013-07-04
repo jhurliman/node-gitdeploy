@@ -15,8 +15,16 @@ main();
 function main() {
   // Load config settings
   nconf
-    .argv()
-    .env()
+    .argv({ f: { alias: 'config', describe: 'configuration file' } })
+    .env();
+
+  if (nconf.get('help'))
+    return console.log('Usage: gitdeploy [-f config.json]');
+
+  if (nconf.get('config'))
+    nconf.file('system', nconf.get('config'));
+
+  nconf
     .file('user', __dirname + '/config.local.json')
     .file('base', __dirname + '/config.json');
 
