@@ -1,5 +1,6 @@
 {
   "log_level": "info",
+  "log_path": "gitdeploy.log",
   "forward_to": [ "http://other.gitdeploy.server/" ],
   "repositories": [
     {
