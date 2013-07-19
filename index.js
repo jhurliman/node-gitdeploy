@@ -43,7 +43,7 @@ function main() {
 
   app.disable('x-powered-by');
   app.use(utils.catchRequestErrors);
-  app.use(express.urlencoded());
+  app.use(express.bodyParser());
 
   // Setup request logging
   app.use(utils.requestLogger({ transports: log.loggers.options.transports }));
@@ -86,10 +86,10 @@ function listeningHandler() {
 function postHook(req, res, next) {
   var payload;
   try { payload = JSON.parse(req.body.payload); }
-  catch (ex) { return next(ex); }
+  catch (ex) { return next('Unparseable POST body: ' + JSON.stringify(req.body)); }
 
   if (!payload.repository)
-    return next('Unrecognized payload: ' + req.body.payload);
+    return next('Unrecognized payload: ' + JSON.stringify(req.body.payload));
 
   // Get the URL of the repository that this ping is about
   var repoUrl = (payload.canon_url) ?
@@ -98,14 +98,17 @@ function postHook(req, res, next) {
   if (!repoUrl)
     return next('Unknown repository url in payload: ' + req.body.payload);
 
-  log.info('Received a ping for repository ' + repoUrl);
+  log.info('Received a ping for repository ' + repoUrl + ' from ' + req.ip);
+  log.debug('payload=' + req.body.payload);
 
   // Forward this request
   var forwards = nconf.get('forward_to');
   if (forwards) {
     forwards.forEach(function(url) {
       log.info('Forwarding ping to ' + url);
-      request.post({ url: url, body: 'payload=' + req.body.payload }, function(err) {
+      request.post({ url: url, headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'payload=' + req.body.payload }, function(err)
+      {
         if (err)
           log.warn('Failed to forward ping to ' + url + ': ' + err);
         else
