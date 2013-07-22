@@ -143,10 +143,9 @@ function postHook(req, res, next) {
 function updateRepo(repo, callback) {
   log.info('Updating repository ' + repo.path);
   exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
-    if (err || stderr)
-      return callback('git pull in ' + repo.path + ' failed: ' + (err || stderr.trim()));
+    if (err) return callback('git pull in ' + repo.path + ' failed: ' + err);
 
-    log.debug('[git pull] ' + stdout.trim());
+    log.debug('[git pull] ' + stdout.trim() + '\n' + stderr.trim());
     log.info('Updated repository ' + repo.url + ' -> ' + repo.path);
 
     if (!repo.deploy)
