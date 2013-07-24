@@ -1,6 +1,6 @@
 {
   "name": "gitdeploy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Listen for git web hooks and automatically update and deploy code",
   "main": "index.js",
   "keywords": [ "git", "deploy", "deployment", "github", "bitbucket", "automatic" ],
