@@ -6,6 +6,7 @@
     {
       "url": "https://github.com/jhurliman/Test-Repo",
       "path": "/home/jhurliman/projects/Test-Repo",
+      "reset": true,
       "deploy": "echo deploying"
     },
     {

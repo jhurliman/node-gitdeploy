@@ -142,24 +142,40 @@ function postHook(req, res, next) {
 
 function updateRepo(repo, callback) {
   log.info('Updating repository ' + repo.path);
-  exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
-    if (err) return callback('git pull in ' + repo.path + ' failed: ' + err);
 
-    log.debug('[git pull] ' + stdout.trim() + '\n' + stderr.trim());
-    log.info('Updated repository ' + repo.url + ' -> ' + repo.path);
+  if (repo.reset) {
+    exec('git reset --hard HEAD', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
+      if (err) return callback('git reset --hard HEAD in ' + repo.path + ' failed: ' + err);
 
-    if (!repo.deploy)
-      return callback();
+      log.debug('[git reset] ' + stdout.trim() + '\n' + stderr.trim());
+      log.info('Reset repository ' + repo.url + ' -> ' + repo.path);
 
-    log.info('Running deployment "' + repo.deploy + '"');
-    exec(repo.deploy, { cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
-      if (err || stderr)
-        return callback('Deploy "' + repo.deploy + '" failed: ' + (err || stderr.trim()));
-
-      log.debug('[' + repo.deploy + '] ' + stdout.trim());
-      log.info('Finished deployment "' + repo.deploy + '"');
-
-      callback();
+      gitPull();
     });
-  });
+  } else {
+    gitPull();
+  }
+
+  function gitPull() {
+    exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
+      if (err) return callback('git pull in ' + repo.path + ' failed: ' + err);
+
+      log.debug('[git pull] ' + stdout.trim() + '\n' + stderr.trim());
+      log.info('Updated repository ' + repo.url + ' -> ' + repo.path);
+
+      if (!repo.deploy)
+        return callback();
+
+      log.info('Running deployment "' + repo.deploy + '"');
+      exec(repo.deploy, { cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
+        if (err || stderr)
+          return callback('Deploy "' + repo.deploy + '" failed: ' + (err || stderr.trim()));
+
+        log.debug('[' + repo.deploy + '] ' + stdout.trim());
+        log.info('Finished deployment "' + repo.deploy + '"');
+
+        callback();
+      });
+    });
+  }
 }
