@@ -40,6 +40,7 @@ function main() {
     throw new Error('Binding to ports less than 1024 requires root privileges');
 
   var app = module.exports = express();
+  var server = require('http').createServer(app);
 
   app.disable('x-powered-by');
   app.use(utils.catchRequestErrors);
@@ -58,7 +59,7 @@ function main() {
   app.use(utils.handle500);
 
   // Start listening for requests
-  app.listen(nconf.get('web_port'), listeningHandler);
+  server.listen(nconf.get('web_port'), listeningHandler);
 }
 
 function listeningHandler() {
