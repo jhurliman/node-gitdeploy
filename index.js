@@ -168,10 +168,15 @@ function updateRepo(repo, callback) {
 
       log.info('Running deployment "' + repo.deploy + '"');
       exec(repo.deploy, { cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
-        if (err || stderr)
-          return callback('Deploy "' + repo.deploy + '" failed: ' + (err || stderr.trim()));
+        if (err)
+          return callback('Deploy "' + repo.deploy + '" failed: ' + err);
 
-        log.debug('[' + repo.deploy + '] ' + stdout.trim());
+        // Merge stderr output into stdout
+        stdout = (stdout || '').trim();
+        if (stderr)
+          stdout += '\n' + stderr.trim();
+
+        log.debug('[' + repo.deploy + '] ' + stdout);
         log.info('Finished deployment "' + repo.deploy + '"');
 
         callback();
