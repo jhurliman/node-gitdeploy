@@ -168,7 +168,7 @@ function updateRepo(repo, callback) {
         return callback();
 
       log.info('Running deployment "' + repo.deploy + '"');
-      exec(repo.deploy, { cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
+      exec(repo.deploy, { env: process.env, cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
         if (err)
           return callback('Deploy "' + repo.deploy + '" failed: ' + err);
 
