@@ -8,6 +8,7 @@ var utils = require('./utils');
 
 var PULL_TIMEOUT_MS = 1000 * 60 * 20; // 20 minutes
 var DEPLOY_TIMEOUT_MS = 1000 * 60 * 20; // 20 minutes
+var MAX_OUTPUT_BYTES = 524288; // 512 KB
 
 main();
 
@@ -145,7 +146,7 @@ function updateRepo(repo, callback) {
   log.info('Updating repository ' + repo.path);
 
   if (repo.reset) {
-    exec('git reset --hard HEAD', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
+    exec('git reset --hard HEAD', { cwd: repo.path, timeout: PULL_TIMEOUT_MS, maxBuffer: MAX_OUTPUT_BYTES }, function(err, stdout, stderr) {
       if (err) return callback('git reset --hard HEAD in ' + repo.path + ' failed: ' + err);
 
       log.debug('[git reset] ' + stdout.trim() + '\n' + stderr.trim());
@@ -158,7 +159,7 @@ function updateRepo(repo, callback) {
   }
 
   function gitPull() {
-    exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS }, function(err, stdout, stderr) {
+    exec('git pull', { cwd: repo.path, timeout: PULL_TIMEOUT_MS, maxBuffer: MAX_OUTPUT_BYTES }, function(err, stdout, stderr) {
       if (err) return callback('git pull in ' + repo.path + ' failed: ' + err);
 
       log.debug('[git pull] ' + stdout.trim() + '\n' + stderr.trim());
@@ -168,7 +169,7 @@ function updateRepo(repo, callback) {
         return callback();
 
       log.info('Running deployment "' + repo.deploy + '"');
-      exec(repo.deploy, { env: process.env, cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS }, function(err, stdout, stderr) {
+      exec(repo.deploy, { env: process.env, cwd: repo.path, timeout: DEPLOY_TIMEOUT_MS, maxBuffer: MAX_OUTPUT_BYTES }, function(err, stdout, stderr) {
         if (err)
           return callback('Deploy "' + repo.deploy + '" failed: ' + err);
 
