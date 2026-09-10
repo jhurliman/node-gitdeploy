@@ -1,17 +1,44 @@
 {
   "name": "gitdeploy",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "Listen for git web hooks and automatically update and deploy code",
   "main": "index.js",
-  "keywords": [ "git", "deploy", "deployment", "github", "bitbucket", "automatic" ],
+  "keywords": [
+    "git",
+    "deploy",
+    "deployment",
+    "github",
+    "bitbucket",
+    "automatic"
+  ],
   "author": "John Hurliman <jhurliman@jhurliman.org>",
   "license": "BSD",
-  "bin" : { "gitdeploy" : "./bin/gitdeploy.js" },
-  "dependencies": {
-    "async": "0.2.9",
-    "express": "3.3.2",
-    "nconf": "0.6.7",
-    "request": "2.21.0",
-    "winston": "0.7.2"
+  "bin": {
+    "gitdeploy": "./bin/gitdeploy.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:types": "tsc -p type-tests/tsconfig.json",
+    "prepack": "npm test && npm run test:types"
+  },
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "bin/",
+    "config.example.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhurliman/node-gitdeploy.git"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "@types/node": "^22.0.0"
   }
 }
