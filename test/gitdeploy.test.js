@@ -132,3 +132,13 @@ test('real git checkout fast-forwards, executes configured argv, refuses wrong b
   await writeFile(path.join(source, 'value'), 'three'); await run(source, 'commit', '-am', 'third'); await run(source, 'push');
   await assert.rejects(deployRepository(config, 10000));
 });
+
+test('close waits for an in-flight hostname bind and prevents later reopening', async () => {
+  const r = createServer({ secret, repositories: [repo] });
+  r.server.listen(0, 'localhost');
+  await r.close();
+  assert.equal(r.server.listening, false);
+  assert.equal(r.server.address(), null);
+  await r.close();
+  assert.throws(() => r.server.listen(0), /closed/);
+});

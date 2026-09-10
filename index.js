@@ -155,6 +155,16 @@ function createServer(config, options = {}) {
       respond(202, 'accepted');
     } catch { if (!res.headersSent && !res.destroyed) respond(400, 'invalid request'); }
   });
+  let binding = false;
+  const listen = server.listen;
+  server.listen = function (...args) {
+    if (closing) throw new Error('Receiver is closed');
+    binding = true;
+    try { return listen.apply(this, args); }
+    catch (error) { binding = false; throw error; }
+  };
+  server.on('listening', () => { binding = false; });
+  server.on('error', () => { binding = false; });
   server.requestTimeout = 30000;
   server.headersTimeout = 15000;
   async function drain() { while (pending.size) await Promise.all([...pending]); }
@@ -162,8 +172,18 @@ function createServer(config, options = {}) {
     if (!closePromise) {
       closing = true;
       closePromise = new Promise((resolve, reject) => {
-        if (!server.listening) return resolve();
-        server.close(error => error ? reject(error) : resolve());
+        const shut = () => {
+          server.removeListener('listening', onListening);
+          server.removeListener('error', onError);
+          if (!server.listening) return resolve();
+          server.close(error => error ? reject(error) : resolve());
+        };
+        const onListening = () => shut();
+        const onError = () => shut();
+        if (binding) {
+          server.once('listening', onListening);
+          server.once('error', onError);
+        } else shut();
       }).then(drain);
     }
     return closePromise;
